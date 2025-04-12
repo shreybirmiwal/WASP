@@ -1,3 +1,8 @@
+#to do:
+# 1. make differnet personalities for each agent
+#2 . make each agent output return in clean GPT format with explaining: 1. path, 2. issues, 3. feedback and 4. score for personality
+
+
 from flask import Flask, request, jsonify
 from langchain_openai import ChatOpenAI
 from browser_use import Agent, SystemPrompt, Controller
@@ -62,7 +67,7 @@ async def run_agent_task(task, website_link, agent_id):
     
     history = await agent.run()    
 
-    return {"Agent_"+agent_id : str(history)}
+    return {"Agent_"+str(agent_id) : str(history)}
 
 
 @app.route("/run-task", methods=["POST"])
