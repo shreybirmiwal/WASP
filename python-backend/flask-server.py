@@ -1,20 +1,50 @@
 from flask import Flask, request, jsonify
 from langchain_openai import ChatOpenAI
-from browser_use import Agent
+from browser_use import Agent, SystemPrompt, Controller
+from pydantic import BaseModel
 import asyncio
 from dotenv import load_dotenv
 import os
+import time
+from typing import List, Dict, Optional
 
-# Load environment variables
-load_dotenv()
+akash_api_key = "sk-uY7N8SRZ1M5WbSY3S4Qvlg"
+akash_base_url = "https://chatapi.akash.network/api/v1"
 
 app = Flask(__name__)
 
-# Akash GPT API info
-akash_api_key = os.getenv("AKASH_API_KEY", "sk-uY7N8SRZ1M5WbSY3S4Qvlg")
-akash_base_url = os.getenv("AKASH_BASE_URL", "https://chatapi.akash.network/api/v1")
+# Define structured output format for UX data
+class UXMetric(BaseModel):
+    element_found: bool
+    time_taken: float
+    confusion_points: List[str]
+    path_taken: List[str]
+    success: bool
+    issues_encountered: List[str]
 
-# Define async task runner
+class UXTestResult(BaseModel):
+    task_description: str
+    success: bool
+    steps_taken: int
+    ux_metrics: UXMetric
+    screenshots: List[str]
+    visited_urls: List[str]
+    final_feedback: Optional[str]
+
+# Custom system prompt for UX testing
+class UXSystemPrompt(SystemPrompt):
+    def important_rules(self) -> str:
+        base_rules = super().important_rules()
+        return f"""{base_rules}
+        8. CRITICAL UX COLLECTION RULES:
+        - Always track time taken for each action
+        - Note any interface elements that caused confusion
+        - Record alternative paths considered
+        - Identify elements that were hard to find
+        - Document any usability issues encountered
+        - Estimate user frustration level on scale 1-5
+        """
+
 async def run_agent_task(task, website_link, agent_id):
     llm = ChatOpenAI(
         model="Meta-Llama-4-Maverick-17B-128E-Instruct-FP8",
@@ -25,9 +55,15 @@ async def run_agent_task(task, website_link, agent_id):
     agent = Agent(
         task=f"{task} on {website_link} (Agent {agent_id})",
         llm=llm,
+        system_prompt_class=UXSystemPrompt,
+        save_conversation_path=f"ux_logs/agent_{agent_id}_{int(time.time())}",
+        controller=Controller(output_model=UXTestResult)
     )
-    result = await agent.run()
-    return {"agent_id": agent_id, "result": result}
+    
+    history = await agent.run()    
+
+    return {"Agent_"+agent_id : str(history)}
+
 
 @app.route("/run-task", methods=["POST"])
 def run_task():
