@@ -1,8 +1,3 @@
-#to do:
-# 1. make differnet personalities for each agent
-#2 . make each agent output return in clean GPT format with explaining: 1. path, 2. issues, 3. feedback and 4. score for personality
-
-
 from flask import Flask, request, jsonify
 from langchain_openai import ChatOpenAI
 from browser_use import Agent, SystemPrompt, Controller
@@ -13,9 +8,25 @@ import os
 import time
 from typing import List, Dict, Optional
 import random
+from openai import OpenAI
+
+load_dotenv()
 
 akash_api_key = "sk-uY7N8SRZ1M5WbSY3S4Qvlg"
 akash_base_url = "https://chatapi.akash.network/api/v1"
+akash_model = "Meta-Llama-4-Maverick-17B-128E-Instruct-FP8"
+
+
+# akash_api_key = os.getenv("OPENROUTER_API_KEY"),
+# akash_base_url = "https://openrouter.ai/api/v1"
+# akash_model = "google/gemini-2.0-flash-exp:free"
+
+
+structured_client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key = os.getenv("OPENROUTER_API_KEY"),
+)
+
 
 app = Flask(__name__)
 
@@ -53,7 +64,7 @@ class UXSystemPrompt(SystemPrompt):
 
 async def run_agent_task(task, website_link, agent_id, profile):
     llm = ChatOpenAI(
-        model="Meta-Llama-4-Maverick-17B-128E-Instruct-FP8",
+        model=akash_model,
         api_key=akash_api_key,
         base_url=akash_base_url,
     )
@@ -62,13 +73,60 @@ async def run_agent_task(task, website_link, agent_id, profile):
         task=f"{task} on {website_link} (Agent {agent_id}). You are to pretend you are a {profile}, doing what a common {profile} would do on this website - to simulate UX resaerch",
         llm=llm,
         system_prompt_class=UXSystemPrompt,
-        save_conversation_path=f"ux_logs/agent_{agent_id}_{int(time.time())}",
         controller=Controller(output_model=UXTestResult)
     )
     
     history = await agent.run()    
+    compressed_output = compress_history(str(history), profile, task)
+    
+    return {"Agent_"+str(agent_id) : {"profile": profile, "compressed_output": compressed_output}}
 
-    return {"Agent_"+str(agent_id) : {"profile": profile, "history": str(history)}}
+def compress_history(output, profile, question):
+    
+    prompt = f"""
+    You are observing a user interacting with a website. Your job is to understand their actions and extract information relavent to a UXR researcher.
+
+    The question they were asked was {question}
+    The user is a {profile}.
+    This is the history of the user's actions:
+    {output}
+
+    
+    Your output should be in the following format:
+
+    json
+    [
+    "path_taken": "The path the user took",
+    "feedback": "Assume the role of the user and give feedback on the website as if you were a user in the profile",
+    "issues_encountered": "Any issues the user encountered",
+    "score_of_usability": "A score of usability from 1 to 10",
+    "time_taken": "The time taken to complete the task",
+    ]
+    
+
+    """
+
+    completion = structured_client.chat.completions.create(
+
+    model="google/gemini-2.5-pro-exp-03-25:free",
+    messages=[
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": prompt
+            },
+        ]
+        }
+    ],
+    response_format= { "type": "json_object" } 
+    
+    )
+    print(completion.choices[0].message.content)
+
+    return completion.choices[0].message.content
+
 
 
 @app.route("/run-task", methods=["POST"])
@@ -108,40 +166,6 @@ def run_task():
     except Exception as e:
         print("Exception occurred:", str(e))  # Log exceptions
         return jsonify({"error": str(e)}), 500
-    
-
-
-def compress_history(output, profile, question):
-
-    # call openai api to compress history
-    llm = ChatOpenAI(
-        model="gpt-4o-mini",
-        api_key=akash_api_key,
-        base_url=akash_base_url,
-    )
-
-    prompt = f"""
-    You are observing a user interacting with a website. Your job is to understand their actions and extract information relavent to a UXR researcher.
-
-    The question they were asked was {question}
-    The user is a {profile}.
-    This is the history of the user's actions:
-    {output}
-
-    
-    Your output should be in the following format:
-    
-    Path taken:
-    Issues encountered:
-    Feedback (generate some feedback what the user might give feedback on, focus on the user profile specifically):
-    Score of usability:
-    Time taken:
-
-    """
-
-    response = llm.invoke(prompt)
-    return response.content
-
 
 @app.route("/")
 def index():
