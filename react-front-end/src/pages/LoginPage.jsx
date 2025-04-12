@@ -63,6 +63,15 @@ const LoginPage = () => {
         <img src={logo} alt="Logo" className="h-32 w-32 object-contain" />
       </div>
 
+      {/* Dashboard Button */}
+      <div className="fixed top-4 right-4">
+        <button
+          className="px-4 py-2 bg-white/60 backdrop-blur-md border border-white/30 rounded-lg text-gray-700 hover:bg-white/80 transition-colors"
+        >
+          Dashboard
+        </button>
+      </div>
+
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen p-4">
         <form onSubmit={handleSubmit} className="w-full max-w-2xl">
@@ -99,33 +108,36 @@ const LoginPage = () => {
                   Task Prompts
                 </label>
                 <div className="space-y-2">
-                  {tasks.map((task, index) => (
-                    <div key={index} className="flex items-start gap-2 p-3 bg-white/40 border border-gray-300 rounded-lg">
-                      <p className="flex-1 text-gray-700">{task}</p>
-                      <button
-                        type="button"
-                        onClick={() => removeTask(index)}
-                        className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-lg text-sm"
-                      >
-                        Remove
-                      </button>
+                  <div className="p-3 bg-white/40 border border-gray-300 rounded-lg min-h-[100px]">
+                    <div className="flex flex-wrap gap-2">
+                      {tasks.map((task, index) => (
+                        <div key={index} className="flex items-center gap-1 px-2 py-1 bg-white/60 rounded group">
+                          <span className="text-gray-700 text-sm">{task}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeTask(index)}
+                            className="text-red-500 hover:text-red-700 focus:outline-none"
+                            aria-label="Remove task"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                  <textarea
-                    id="prompt"
-                    value={prompt}
-                    onChange={(e) => {
-                      setPrompt(e.target.value);
-                      setErrors(prev => ({ ...prev, prompt: "" }));
-                    }}
-                    onKeyDown={handlePromptSubmit}
-                    className={`w-full px-3 py-1.5 bg-white/40 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none ${
-                      errors.prompt ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Type a task prompt and press Enter to add it..."
-                    aria-invalid={!!errors.prompt}
-                    aria-describedby={errors.prompt ? "prompt-error" : undefined}
-                  />
+                    <textarea
+                      id="prompt"
+                      value={prompt}
+                      onChange={(e) => {
+                        setPrompt(e.target.value);
+                        setErrors(prev => ({ ...prev, prompt: "" }));
+                      }}
+                      onKeyDown={handlePromptSubmit}
+                      className="w-full mt-2 px-3 py-1.5 bg-transparent border-0 focus:outline-none focus:ring-0 resize-none"
+                      placeholder={tasks.length === 0 ? "" : "Add another task..."}
+                      aria-invalid={!!errors.prompt}
+                      aria-describedby={errors.prompt ? "prompt-error" : undefined}
+                    />
+                  </div>
                 </div>
                 {errors.prompt && (
                   <p id="prompt-error" className="text-xs text-red-600" role="alert">
