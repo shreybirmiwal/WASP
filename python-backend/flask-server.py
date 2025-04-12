@@ -98,13 +98,12 @@ def compress_history(output, profile, question):
 
     json
     [
-    "path_taken": "The path the user took",
+    "path_taken": ["The path the user took", "path2"],
     "feedback": "Assume the role of the user and give feedback on the website as if you were a user in the profile",
-    "issues_encountered": "Any issues the user encountered",
+    "issues_encountered": ["Any issues the user encountered", "issue2],
     "score_of_usability": "A score of usability from 1 to 10",
     "time_taken": "The time taken to complete the task",
     ]
-    
 
     """
 
