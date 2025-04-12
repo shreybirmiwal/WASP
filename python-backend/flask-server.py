@@ -79,7 +79,7 @@ async def run_agent_task(task, website_link, agent_id, profile):
     history = await agent.run()    
     compressed_output = compress_history(str(history), profile, task)
     
-    return {"Agent_"+str(agent_id) : {"profile": profile, "compressed_output": compressed_output}}
+    return {"Agent_"+str(agent_id) : {"agentID": agent_id,"query":task, "profile": profile, "compressed_output": compressed_output}}
 
 def compress_history(output, profile, question):
 
@@ -159,8 +159,6 @@ def run_task():
             results = await asyncio.gather(*tasks)
             print("Completed all agent tasks.")  # Log after running tasks
             return results
-
-
 
         # Run all agents in event loop
         results = asyncio.run(run_all_agents())
