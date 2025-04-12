@@ -1,8 +1,18 @@
 # utproducthack
 
 
-Sample data:
+input data:
+POST http://127.0.0.1:8000/run-task
+{
+  "website_link": "https://docs.base.org",
+  "task": "How would you find where to launch a token",
+  "num_agents": 1,
+  "profiles": ["Grandma", "Normal person", "color blind person"]
+}
 
+
+
+OUTPUT data:
 
 {
     "agents": [
