@@ -49,7 +49,7 @@ def run_task():
 
         async def run_all_agents():
             tasks = [
-                run_agent_task(task, website_link, i + 1)
+                run_agent_task(task, website_link, i +1)
                 for i in range(num_agents)
             ]
             print("Running all agent tasks...")  # Log before running tasks

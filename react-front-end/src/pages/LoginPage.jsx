@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-// Assuming logo is correctly imported relative to this file's location
-// Using a placeholder if the import path isn't guaranteed
-const logo = "./logo.svg"
+import logo from "../logo.svg";
 
 const LoginPage = () => {
   // --- State Variables ---
