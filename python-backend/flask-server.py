@@ -9,6 +9,7 @@ import time
 from typing import List, Dict, Optional
 import random
 from openai import OpenAI
+import json
 
 load_dotenv()
 
@@ -61,6 +62,7 @@ class UXSystemPrompt(SystemPrompt):
         - Document any usability issues encountered
         - Estimate user frustration level on scale 1-5
         """
+
 
 async def run_agent_task(task, website_link, agent_id, profile):
     llm = ChatOpenAI(
@@ -125,7 +127,7 @@ def compress_history(output, profile, question):
     )
     print(completion.choices[0].message.content)
 
-    return completion.choices[0].message.content
+    return json.loads(completion.choices[0].message.content)
 
 
 
@@ -157,6 +159,8 @@ def run_task():
             results = await asyncio.gather(*tasks)
             print("Completed all agent tasks.")  # Log after running tasks
             return results
+
+
 
         # Run all agents in event loop
         results = asyncio.run(run_all_agents())
