@@ -13,14 +13,12 @@ import json
 
 load_dotenv()
 
+print("Loading environment variables...")
+print("OPENROUTER_API_KEY:", os.getenv("OPENROUTER_API_KEY"))
+
 akash_api_key = "sk-uY7N8SRZ1M5WbSY3S4Qvlg"
 akash_base_url = "https://chatapi.akash.network/api/v1"
 akash_model = "Meta-Llama-4-Maverick-17B-128E-Instruct-FP8"
-
-
-# akash_api_key = os.getenv("OPENROUTER_API_KEY"),
-# akash_base_url = "https://openrouter.ai/api/v1"
-# akash_model = "google/gemini-2.0-flash-exp:free"
 
 
 structured_client = OpenAI(
@@ -68,7 +66,7 @@ async def run_agent_task(task, website_link, agent_id, profile):
     llm = ChatOpenAI(
         model=akash_model,
         api_key=akash_api_key,
-        base_url=akash_base_url,
+        base_url=akash_base_url,  
     )
     
     agent = Agent(
@@ -84,6 +82,8 @@ async def run_agent_task(task, website_link, agent_id, profile):
     return {"Agent_"+str(agent_id) : {"profile": profile, "compressed_output": compressed_output}}
 
 def compress_history(output, profile, question):
+
+    print("Compressing history...")  # Log before compression
     
     prompt = f"""
     You are observing a user interacting with a website. Your job is to understand their actions and extract information relavent to a UXR researcher.
@@ -176,4 +176,4 @@ def index():
     return "Hello World"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=8000, debug=True)
