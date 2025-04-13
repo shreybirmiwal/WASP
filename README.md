@@ -1,3 +1,5 @@
+![WASP Logo](wasp logo.png)
+
 # WASP – AI-Powered UX Testing
 
 ## The Problem
@@ -6,5 +8,5 @@ UX testing is critical for startups aiming to deliver exceptional user experienc
 
 ## 🤖 What is WASP?
 
-**WASP** is an AI-driven tool that revolutionizes UX testing. By leveraging browser agents, WASP can simulate human interaction with your website, complete specified tasks, and provide real-time insights on usability and flow. 
+**WASP** is an AI-driven tool that revolutionizes UX testing by simulating thousands of users. By leveraging browser agents, WASP can simulate human interaction with your website, complete specified tasks, and provide real-time insights on usability and flow. 
 
