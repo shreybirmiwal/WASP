@@ -5,8 +5,7 @@
 
 User testing is singed upon as the "most important thing" for startups. Yet, it is rarely done because of the high costs and time associated with UXR. For example, Coinbase pays 30$ for a 10 minute UXR interview to 100s of people. Fast growing small startups can't afford to spend the money or the time to take user interviews all day.
 
-[![Demo Vid](https://img.youtube.com/vi/wmsZRCeKpsU/maxresdefault.jpg)](https://www.youtube.com/watch?v=wmsZRCeKpsU)
-
+[![YouTube](http://i.ytimg.com/vi/wmsZRCeKpsU/hqdefault.jpg)](https://www.youtube.com/watch?v=wmsZRCeKpsU)
 
 ## Local Development
 Frontend:
