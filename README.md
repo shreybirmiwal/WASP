@@ -1,4 +1,4 @@
-![WASP Logo](wasp logo.png)
+<img width="751" alt="wasp logo" src="https://github.com/user-attachments/assets/c2119bad-3ca1-4f5e-9818-eba25e5df02a" />
 
 # WASP – AI-Powered UX Testing
 
