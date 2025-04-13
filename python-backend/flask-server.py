@@ -132,6 +132,10 @@ def compress_history(output, profile, question):
 
 @app.route("/run-task", methods=["POST"])
 def run_task():
+    # return {
+
+    # }
+
     try:
         data = request.get_json()
         print("Received request data:", data)  # Log incoming request data

@@ -2,11 +2,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const AsciiBee = ({ initialDelay = 0 }) => {
-    const [position, setPosition] = useState({ top: 50, left: 50 });
+    // Initialize state with a function to ensure random values are set only once
+    const [position, setPosition] = useState(() => ({
+        top: Math.random() * 100, // Start randomly (0-85%)
+        left: Math.random() * 100, // Start randomly (0-85%)
+    }));
     const [isVisible, setIsVisible] = useState(false);
     const beeRef = useRef(null);
 
-    // Your provided ASCII Bee art
     const beeArt = `
       _  _
      | )/ )
@@ -14,15 +17,11 @@ const AsciiBee = ({ initialDelay = 0 }) => {
   (")(_)-"()))=-
      (\\)
   `;
-    // Note: Extra backslash \\ needed for the last line to escape it in JS string
 
     useEffect(() => {
+        // Only handle the fade-in visibility here
         const initialTimer = setTimeout(() => {
             setIsVisible(true);
-            setPosition({
-                top: Math.random() * 85, // Adjust bounds slightly for multi-line art
-                left: Math.random() * 85,
-            });
         }, initialDelay);
         return () => clearTimeout(initialTimer);
     }, [initialDelay]);
@@ -31,26 +30,26 @@ const AsciiBee = ({ initialDelay = 0 }) => {
         if (!isVisible) return;
         const moveBee = () => {
             setPosition((prevPos) => {
-                const stepSize = 5;
+                const stepSize = 15;
                 const nextTop = Math.min(85, Math.max(5, prevPos.top + (Math.random() - 0.5) * stepSize * 2));
                 const nextLeft = Math.min(85, Math.max(5, prevPos.left + (Math.random() - 0.5) * stepSize * 2));
                 return { top: nextTop, left: nextLeft };
             });
         };
-        const intervalDuration = 6000 + Math.random() * 4000; // 6-10 seconds
+        const intervalDuration = 500 + Math.random() * 4000;
         const intervalId = setInterval(moveBee, intervalDuration);
         return () => clearInterval(intervalId);
     }, [isVisible]);
 
-    const transitionDuration = `${5 + Math.random() * 5}s`; // 5-10 seconds transition
+    const transitionDuration = `${5 + Math.random() * 5}s`;
 
     return (
         <div
             ref={beeRef}
             className={`
-        absolute select-none text-yellow-400 text-xs // Adjust text size if needed
+        absolute select-none text-yellow-400 text-xs
         transition-all ease-in-out pointer-events-none
-        ${isVisible ? 'opacity-60' : 'opacity-0'} // Slightly less opaque
+        ${isVisible ? 'opacity-60' : 'opacity-0'}
       `}
             style={{
                 top: `${position.top}%`,
@@ -58,8 +57,8 @@ const AsciiBee = ({ initialDelay = 0 }) => {
                 transitionDuration: transitionDuration,
                 transitionProperty: 'top, left, opacity',
                 zIndex: 10,
-                whiteSpace: 'pre', // Important for multi-line ASCII
-                lineHeight: '1',  // Tighten line height
+                whiteSpace: 'pre',
+                lineHeight: '1',
             }}
         >
             {beeArt}
