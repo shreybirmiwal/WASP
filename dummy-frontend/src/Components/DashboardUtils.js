@@ -8,6 +8,7 @@ const parseScore = (scoreStr) => {
 
 // Helper to safely parse time string ("120.0 seconds") to number
 const parseTime = (timeStr) => {
+    if (typeof timeStr === 'number') return timeStr; // Return directly if it's a number
     if (!timeStr || typeof timeStr !== 'string') return null;
     const match = timeStr.match(/([\d.]+)\s*seconds/i);
     if (match && match[1]) {
@@ -19,6 +20,8 @@ const parseTime = (timeStr) => {
 
 // Main function to process data for the dashboard
 export const processDashboardData = (output) => {
+    console.log("Received output:", output);
+
     if (!output || !output.agents || !Array.isArray(output.agents)) {
         return { error: 'Invalid output format' };
     }
@@ -26,7 +29,7 @@ export const processDashboardData = (output) => {
     const agentsData = output.agents.map(agentObj => {
         const agentKey = Object.keys(agentObj)[0];
         const data = agentObj[agentKey];
-        const compressed = data?.compressed_output?.[0]; // Assuming one compressed output
+        const compressed = data?.compressed_output; // Assuming one compressed output
 
         return {
             id: data?.agentID,
@@ -42,6 +45,8 @@ export const processDashboardData = (output) => {
             time: parseTime(compressed?.time_taken),
         };
     }).filter(agent => agent.id !== undefined); // Filter out potentially malformed agent entries
+
+    console.log("Processed agentsData:", agentsData);
 
     if (agentsData.length === 0) {
         return { error: 'No valid agent data found' };

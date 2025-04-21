@@ -14,7 +14,7 @@ import json
 load_dotenv()
 
 print("Loading environment variables...")
-print("OPENROUTER_API_KEY:", os.getenv("OPENROUTER_API_KEY"))
+print("OPENROUTER_API_KEY:", os.getenv("OPENROUTER_API_KEY1"))
 
 akash_api_key = "sk-uY7N8SRZ1M5WbSY3S4Qvlg"
 akash_base_url = "https://chatapi.akash.network/api/v1"
@@ -22,8 +22,8 @@ akash_model = "Meta-Llama-4-Maverick-17B-128E-Instruct-FP8"
 
 
 structured_client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key = os.getenv("OPENROUTER_API_KEY"),
+  base_url= "https://chatapi.akash.network/api/v1",
+  api_key = "sk-uY7N8SRZ1M5WbSY3S4Qvlg",
 )
 
 
@@ -109,7 +109,7 @@ def compress_history(output, profile, question):
 
     completion = structured_client.chat.completions.create(
 
-    model="google/gemini-2.5-pro-exp-03-25:free",
+    model="Meta-Llama-4-Maverick-17B-128E-Instruct-FP8",
     messages=[
         {
         "role": "user",
